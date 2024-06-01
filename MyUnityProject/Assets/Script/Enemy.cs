@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
     }
 
     IEnumerator UpdatePath(){
-        float refreshRate = 0.25f;
+        float refreshRate = .25f;
 
         while(target != null){
             Vector3 targetPosition = new Vector3(target.position.x,0,target.position.z);
