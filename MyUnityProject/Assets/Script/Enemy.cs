@@ -9,7 +9,7 @@ public class Enemy : LivingEntity
     NavMeshAgent pathfinder;
     Transform target;
     // Start is called before the first frame update
-    public override void Start()
+    protected override void Start()
     {
         base.Start();
         pathfinder = GetComponent<NavMeshAgent>();
@@ -29,7 +29,9 @@ public class Enemy : LivingEntity
 
         while(target != null){
             Vector3 targetPosition = new Vector3(target.position.x,0,target.position.z);
-            pathfinder.SetDestination (targetPosition);
+            if (!dead){
+                 pathfinder.SetDestination (targetPosition);
+            }
             yield return new WaitForSeconds(refreshRate);
         }
     }

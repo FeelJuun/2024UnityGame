@@ -8,7 +8,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
     protected float health;
     protected bool dead;
 
-    public virtual void Start(){
+    protected virtual void Start(){
         health = startingHealth;
     }
     public void TakeHit(float damage, RaycastHit hit){
