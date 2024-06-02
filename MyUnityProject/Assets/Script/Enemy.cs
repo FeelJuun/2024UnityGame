@@ -10,18 +10,29 @@ public class Enemy : LivingEntity
     State currentState;
     NavMeshAgent pathfinder;
     Transform target;
+    Material skinMaterial;
 
-    float attackDistanceThreshold = 1.5f;
+    Color originalColour;
+
+    float attackDistanceThreshold = 0.5f;
     float timeBetweenAttacks = 1;
     float nextAttackTime;
+    float myCollisionRadius;
+    float targetCollisionRadius;
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
         pathfinder = GetComponent<NavMeshAgent>();
+        skinMaterial = GetComponent<Renderer> ().material;
+        originalColour = skinMaterial.color;
 
         currentState = State.Chasing;
         target = GameObject.FindGameObjectWithTag ("Player").transform;
+
+        myCollisionRadius = GetComponent<CapsuleCollider>().radius;
+        targetCollisionRadius = target.GetComponent<CapsuleCollider> ().radius;
+
         pathfinder.baseOffset = 1.0f; // position 의 Y값이 계속 0으로 바뀌어서 추가하였습니다.
 
         StartCoroutine (UpdatePath ());
@@ -32,7 +43,7 @@ public class Enemy : LivingEntity
     {
         if (Time.time > nextAttackTime){
         float sqrDstToTarget = (target.position - transform.position).sqrMagnitude;
-        if (sqrDstToTarget < Mathf.Pow(attackDistanceThreshold, 2)){
+        if (sqrDstToTarget < Mathf.Pow(attackDistanceThreshold + myCollisionRadius + targetCollisionRadius, 2)){
             nextAttackTime = Time.time + timeBetweenAttacks;
             StartCoroutine(Attack());
             }   
@@ -45,10 +56,13 @@ public class Enemy : LivingEntity
         pathfinder.enabled = false;
 
         Vector3 originalPosition = transform.position;
-        Vector3 attackPosition = target.position;
+        Vector3 dirToTarget = (target.position - transform.position).normalized;
+        Vector3 attackPosition = target.position - dirToTarget * (myCollisionRadius);
 
         float attackSpeed = 3;
         float percent = 0;
+
+        skinMaterial.color = Color.red;
 
         while (percent <=1 ){
 
@@ -58,6 +72,7 @@ public class Enemy : LivingEntity
         
             yield return null;
         }
+        skinMaterial.color = originalColour;
         currentState = State.Chasing;
         pathfinder.enabled = true;
     }
@@ -67,7 +82,8 @@ public class Enemy : LivingEntity
 
         while(target != null){
             if(currentState == State.Chasing){
-            Vector3 targetPosition = new Vector3(target.position.x,0,target.position.z);
+            Vector3 dirToTarget = (target.position - transform.position).normalized;
+            Vector3 targetPosition = target.position - dirToTarget * (myCollisionRadius + targetCollisionRadius + attackDistanceThreshold/2);
             if (!dead){
                  pathfinder.SetDestination (targetPosition);
                 }
