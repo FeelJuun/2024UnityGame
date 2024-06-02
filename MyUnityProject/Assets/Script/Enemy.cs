@@ -30,7 +30,6 @@ public class Enemy : LivingEntity
         pathfinder = GetComponent<NavMeshAgent>();
         skinMaterial = GetComponent<Renderer> ().material;
         originalColour = skinMaterial.color;
-        pathfinder.baseOffset = 1.0f; // position 의 Y값이 계속 0으로 바뀌어서 추가하였습니다.
 
         if (GameObject.FindGameObjectWithTag ("Player") != null){
             currentState = State.Chasing;
@@ -39,6 +38,7 @@ public class Enemy : LivingEntity
             target = GameObject.FindGameObjectWithTag ("Player").transform;
             targetEntity = target.GetComponent<LivingEntity> ();
             targetEntity.OnDeath += OnTargetDeath;
+            pathfinder.baseOffset = 1.0f; // position 의 Y값이 계속 0으로 바뀌어서 추가하였습니다.
 
             myCollisionRadius = GetComponent<CapsuleCollider>().radius;
             targetCollisionRadius = target.GetComponent<CapsuleCollider> ().radius;
