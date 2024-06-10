@@ -24,6 +24,8 @@ public class LivingEntity : MonoBehaviour, IDamageable
             Die();
         }
     }
+
+    [ContextMenu("Self Destruct")]
     public void Die() {
         dead = true;
         if (OnDeath != null){
