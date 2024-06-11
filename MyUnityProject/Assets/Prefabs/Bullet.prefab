@@ -53,7 +53,7 @@ MeshRenderer:
   m_GameObject: {fileID: 6652698113608438867}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
   m_MotionVectors: 1
@@ -101,7 +101,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collisionMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   trailColour: {r: 0.8867924, g: 0.766705, b: 0.2300641, a: 0.49803922}
 --- !u!96 &8977269956308930140
 TrailRenderer:
