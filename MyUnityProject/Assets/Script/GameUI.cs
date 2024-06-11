@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
@@ -31,7 +32,7 @@ public class GameUI : MonoBehaviour
     
     // 게임다시시작 버튼
     public void StartNewGame() {
-        Application.LoadLevel("DemoGame");
+        SceneManager.LoadScene("DemoGame"); // Application.LoadLevel은 옛 버전이라 Scenmanager로 교체하였습니다.
 
     }
 }
