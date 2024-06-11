@@ -4,29 +4,61 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    public Transform muzzle;
+
+    public enum FireMode {Auto, Burst, Single};
+    public FireMode fireMode;
+    public Transform[] projectileSpawn;
     public Projectile projectile;
     public float msBetweenShorts = 100;
     public float muzzleVelocity = 35;
+    public int burstCount;
 
     public Transform shell;
     public Transform shellEjection;
     MuzzleFlash muzzleflash;
+    float nextShotTime;
+
+    bool triggerReleasedSinceLastShot;
+    int shotsRemainingInBurst;
 
     void Start(){
         muzzleflash = GetComponent<MuzzleFlash> ();
+        shotsRemainingInBurst = burstCount;
     }
 
-    float nextShotTime;
+    void Shoot(){
+        if(Time.time > nextShotTime){
 
-    public void Shoot(){
-        if(Time.time>nextShotTime){
-        nextShotTime = Time.time + msBetweenShorts / 1000;
-        Projectile newProjectile = Instantiate(projectile,muzzle.position,muzzle.rotation) as Projectile;
-        newProjectile.Setspeed(muzzleVelocity);
+            if (fireMode == FireMode.Burst){
+                if (shotsRemainingInBurst == 0){
+                    return;
+                }
+                shotsRemainingInBurst --;
+            }
+            else if (fireMode == FireMode.Single){
+                if (!triggerReleasedSinceLastShot) {
+                    return;
+                } 
+            }
 
-        Instantiate(shell,shellEjection.position, shellEjection.rotation);
-        muzzleflash.Activate();
+            for (int i = 0; i< projectileSpawn.Length; i++){
+                nextShotTime = Time.time + msBetweenShorts / 1000;
+                Projectile newProjectile = Instantiate(projectile,projectileSpawn[i].position,projectileSpawn[i].rotation) as Projectile;
+                newProjectile.Setspeed(muzzleVelocity);
+            }
+
+            Instantiate(shell,shellEjection.position, shellEjection.rotation);
+                muzzleflash.Activate();
         }
+    }
+
+    public void OnTriggerHold() {
+        Shoot();
+        triggerReleasedSinceLastShot = false;
+    }
+
+    public void OnTriggerRelease() {
+        triggerReleasedSinceLastShot = true;
+        shotsRemainingInBurst = burstCount;
     }
 }
