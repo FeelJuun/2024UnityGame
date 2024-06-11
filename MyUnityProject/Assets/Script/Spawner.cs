@@ -35,10 +35,11 @@ public class Spawner : MonoBehaviour
         playerT = playerEntity.transform;
 
         nextCampCheckTime = timeBetweenCampingChecks + Time.time;
-        campPositionOld = playerT.position;
+		campPositionOld = playerT.position;
+		playerEntity.OnDeath += OnPlayerDeath;
 
-        map = FindObjectOfType<MapGenerator> ();
-        NextWave();
+		map = FindObjectOfType<MapGenerator> ();
+		NextWave ();
     }
     void Update(){
         if(!isDisabled){
@@ -78,7 +79,7 @@ public class Spawner : MonoBehaviour
 			spawnTile = map.GetTileFromPosition(playerT.position);
 		}
 		Material tileMat = spawnTile.GetComponent<Renderer> ().material;
-		Color initialColour = tileMat.color;
+		Color initialColour = Color.white;
 		Color flashColour = Color.red;
 		float spawnTimer = 0;
 
@@ -120,10 +121,10 @@ public class Spawner : MonoBehaviour
             enemiesRemainingToSpawn = currentWave.enemyCount;
             enemiesRemainingAlive = enemiesRemainingToSpawn;
 
-            if(OnNewWave != null) {
-                OnNewWave(currentWaveNumber);
-            }
-            ResetPlayerPosition();
+            if (OnNewWave != null) {
+				OnNewWave(currentWaveNumber);
+			}
+			ResetPlayerPosition();
         }
     }
 
