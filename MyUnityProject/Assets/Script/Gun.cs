@@ -51,7 +51,14 @@ public class Gun : MonoBehaviour
                 muzzleflash.Activate();
         }
     }
+    public void Aim(Vector3 aimPoint){
+        Vector3 direction = (aimPoint - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(direction); // 자꾸 Y축이 돌아가 총이 거꾸로 발사 되어 이렇게 수정하였습니다.
 
+    lookRotation *= Quaternion.Euler(0, 180, 0);
+
+    transform.rotation = lookRotation;
+    }
     public void OnTriggerHold() {
         Shoot();
         triggerReleasedSinceLastShot = false;

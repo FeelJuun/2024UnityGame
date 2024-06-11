@@ -20,7 +20,6 @@ public class GunController : MonoBehaviour
         }
         equippedGun = Instantiate(gunToEquip, weaponHold.position, weaponHold.rotation) as Gun;
         equippedGun.transform.parent = weaponHold;
-        
     }
     
    public void OnTriggerHold() {
@@ -40,4 +39,10 @@ public class GunController : MonoBehaviour
             return weaponHold.position.y;
         }
     }
-}
+
+    public void Aim(Vector3 aimPoint){
+        if (equippedGun != null) {
+			equippedGun.Aim(aimPoint); //2
+        }
+    }
+ }

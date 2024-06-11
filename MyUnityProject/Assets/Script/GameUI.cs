@@ -32,7 +32,7 @@ public class GameUI : MonoBehaviour
     
     // 게임다시시작 버튼
     public void StartNewGame() {
-        SceneManager.LoadScene("DemoGame"); // Application.LoadLevel은 옛 버전이라 Scenmanager로 교체하였습니다.
+        SceneManager.LoadScene("TEst"); // Application.LoadLevel은 옛 버전이라 Scenmanager로 교체하였습니다.
 
     }
 }
