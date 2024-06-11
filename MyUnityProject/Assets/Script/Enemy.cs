@@ -53,7 +53,8 @@ public class Enemy : LivingEntity
     public override void TakeHit (float damage, Vector3 hitPoint, Vector3 hitDirection)
 	{
 		if (damage >= health) {
-			Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathEffect.startLifetime);
+            var main = deathEffect.main; // 원래 없던 코드이지만 주의 경고문이 발생하여 deathEffect.startLifetime이라 써야하지만 main.startLifetime.constant라고 수정하였습니다.
+			Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, main.startLifetime.constant);
 		}
 		base.TakeHit (damage, hitPoint, hitDirection);
 	}
