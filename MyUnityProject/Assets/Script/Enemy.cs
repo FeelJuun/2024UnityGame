@@ -26,28 +26,49 @@ public class Enemy : LivingEntity
     float targetCollisionRadius;
 
     bool hasTarget;
-    // Start is called before the first frame update
-    protected override void Start()
-    {
-        base.Start();
-        pathfinder = GetComponent<NavMeshAgent>();
-        skinMaterial = GetComponent<Renderer> ().material;
-        originalColour = skinMaterial.color;
+
+    void Awake(){
+                pathfinder = GetComponent<NavMeshAgent>();
+
 
         if (GameObject.FindGameObjectWithTag ("Player") != null){
-            currentState = State.Chasing;
             hasTarget = true;
 
             target = GameObject.FindGameObjectWithTag ("Player").transform;
             targetEntity = target.GetComponent<LivingEntity> ();
-            targetEntity.OnDeath += OnTargetDeath;
-            pathfinder.baseOffset = 1.0f; // position 의 Y값이 계속 0으로 바뀌어서 추가하였습니다.
 
             myCollisionRadius = GetComponent<CapsuleCollider>().radius;
             targetCollisionRadius = target.GetComponent<CapsuleCollider> ().radius;
 
+        }
+    }
+
+    // Start is called before the first frame update
+    protected override void Start()
+    {
+        base.Start();
+
+
+        if (hasTarget){
+            currentState = State.Chasing;
+            targetEntity.OnDeath += OnTargetDeath;
+            pathfinder.baseOffset = 1.0f; // position 의 Y값이 계속 0으로 바뀌어서 추가하였습니다.
+
             StartCoroutine (UpdatePath ());
         }
+    }
+
+    public void SetCharacteristics(float moveSpeed, int hitsToKillPlayer, float enemyHealth, Color skinColor){
+        pathfinder.speed = moveSpeed;
+        
+        if (hasTarget) {
+            damage = Mathf.Ceil(targetEntity.startingHealth / hitsToKillPlayer);
+        }
+        startingHealth = enemyHealth;
+
+        skinMaterial = GetComponent<Renderer> ().material;
+        skinMaterial.color = skinColor;
+        originalColour = skinMaterial.color;
     }
 
     public override void TakeHit (float damage, Vector3 hitPoint, Vector3 hitDirection)

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    public bool devMode;
     public Wave[] waves;
     public Enemy enemy;
 
@@ -49,38 +50,49 @@ public class Spawner : MonoBehaviour
                 playerEntity.OnDeath += OnPlayerDeath;
             }
 
-            if (enemiesRemainingToSpawn > 0 && Time.time > nextSpawnTime){
+            if ((enemiesRemainingToSpawn > 0 || currentWave.infinite) && Time.time > nextSpawnTime){
                 enemiesRemainingToSpawn--;
                 nextSpawnTime = Time.time + currentWave.timeBetweenSpawns;
-
-                StartCoroutine(SpawnEnemy());
+ 
+                StartCoroutine("SpawnEnemy");
+            }
+        }
+        if (devMode){
+            if (Input.GetKeyDown(KeyCode.Return)){
+                StopCoroutine("SpawnEnemy");
+                foreach (Enemy enemy in FindObjectsOfType<Enemy> ()){
+                    GameObject.Destroy(enemy.gameObject);
+                }
+                NextWave();
             }
         }
     }
 
-    IEnumerator SpawnEnemy(){
-        float spawnDelay = 1;
-        float tileFlashSpeed = 4;
+    
+	IEnumerator SpawnEnemy() {
+		float spawnDelay = 1;
+		float tileFlashSpeed = 4;
 
-        Transform spawnTile = map.GetRandomOpenTile ();
-        if (isCamping){
-            spawnTile = map.GetTileFromPosition(playerT.position);
-        }
-        Material tileMat = spawnTile.GetComponent<Renderer> ().material;
-        Color initialColour = tileMat.color;
-        Color flashColour = Color.red;
-        float spawnTimer = 0;
+		Transform spawnTile = map.GetRandomOpenTile ();
+		if (isCamping) {
+			spawnTile = map.GetTileFromPosition(playerT.position);
+		}
+		Material tileMat = spawnTile.GetComponent<Renderer> ().material;
+		Color initialColour = tileMat.color;
+		Color flashColour = Color.red;
+		float spawnTimer = 0;
 
-        while (spawnTimer < spawnDelay) {
+		while (spawnTimer < spawnDelay) {
 
-            tileMat.color = Color.Lerp(initialColour,flashColour, Mathf.PingPong(spawnTimer * tileFlashSpeed, 1));
+			tileMat.color = Color.Lerp(initialColour,flashColour, Mathf.PingPong(spawnTimer * tileFlashSpeed, 1));
 
-            spawnTimer += Time.deltaTime;
-            yield return null;
-        }
+			spawnTimer += Time.deltaTime;
+			yield return null;
+		}
 
         Enemy spawnedEnemy = Instantiate(enemy, spawnTile.position + Vector3.up, Quaternion.identity) as Enemy;
-        spawnedEnemy.OnDeath += OnEnemyDeath;        
+		spawnedEnemy.OnDeath += OnEnemyDeath;
+		spawnedEnemy.SetCharacteristics (currentWave.moveSpeed, currentWave.hitsToKillPlayer, currentWave.enemyHealth, currentWave.skinColor);      
     }
 
     void OnPlayerDeath(){
@@ -117,7 +129,13 @@ public class Spawner : MonoBehaviour
 
     [System.Serializable]
     public class Wave{
+        public bool infinite;
         public int enemyCount;
         public float timeBetweenSpawns;
+
+        public float moveSpeed;
+        public int hitsToKillPlayer;
+        public float enemyHealth;
+        public Color skinColor;
     }
 }
