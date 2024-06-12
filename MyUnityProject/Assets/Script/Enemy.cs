@@ -67,7 +67,9 @@ public class Enemy : LivingEntity
         }
         startingHealth = enemyHealth;
 
-        skinMaterial = GetComponent<Renderer> ().sharedMaterial;
+        var mainModule = deathEffect.main;
+        mainModule.startColor = new Color(skinColor.r, skinColor.g, skinColor.b, 1);
+        skinMaterial = GetComponent<Renderer> ().material;
         skinMaterial.color = skinColor;
         originalColour = skinMaterial.color;
     }
@@ -90,20 +92,23 @@ public class Enemy : LivingEntity
         hasTarget = false;
         currentState = State.Idle;
     }
-    // Update is called once per frame
-    void Update()
-    {
-            if (hasTarget) {
-            if (Time.time > nextAttackTime){
+ void Update() {
+    if (hasTarget) {
+        if (target == null) {
+            hasTarget = false;
+            return; // Player 객체가 파괴되었을때 오류가 발생하여 수정하였습니다.
+        }
+
+        if (Time.time > nextAttackTime) {
             float sqrDstToTarget = (target.position - transform.position).sqrMagnitude;
-            if (sqrDstToTarget < Mathf.Pow(attackDistanceThreshold + myCollisionRadius + targetCollisionRadius, 2)){
+            if (sqrDstToTarget < Mathf.Pow(attackDistanceThreshold + myCollisionRadius + targetCollisionRadius, 2)) {
                 nextAttackTime = Time.time + timeBetweenAttacks;
                 AudioManager.instance.PlaySound("Enemy Attack", transform.position);
                 StartCoroutine(Attack());
-                }   
             }
         }
     }
+}
     
     IEnumerator Attack(){
 
