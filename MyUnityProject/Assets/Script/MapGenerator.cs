@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Playables;
+using UnityEngine.Playables;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
