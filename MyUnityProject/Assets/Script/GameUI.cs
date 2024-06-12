@@ -15,12 +15,16 @@ public class GameUI : MonoBehaviour
     public TextMeshProUGUI newWaveTitle;
     public TextMeshProUGUI newWaveEnemyCount;
     public TextMeshProUGUI scoreUI;
+    public TextMeshProUGUI gameOverScoreUI;
+    public RectTransform healthBar;
 
     Spawner spawner;
+    Player player;
 
     void Start()
     {
-        FindObjectOfType<Player>().OnDeath += OnGameOver;
+        player = FindObjectOfType<Player>();
+        player.OnDeath += OnGameOver;
     }
 
     void Awake(){
@@ -30,6 +34,11 @@ public class GameUI : MonoBehaviour
 
     void Update(){
         scoreUI.text = ScoreKeeper.score.ToString("D6");
+        float healthPercent = 0;
+        if (player != null){
+            healthPercent = player.health / player.startingHealth;
+        }
+        healthBar.localScale = new Vector3 (healthPercent, 1, 1);
     }
 
     void OnNewWave(int waveNumber){
@@ -43,7 +52,11 @@ public class GameUI : MonoBehaviour
     }
 
     void OnGameOver(){
-        StartCoroutine(Fade (Color.clear, Color.black,1));
+        Cursor.visible = true;
+        StartCoroutine(Fade (Color.clear, new Color(0,0,0,.95f),1));
+        gameOverScoreUI.text = scoreUI.text;
+        scoreUI.gameObject.SetActive(false);
+        healthBar.transform.parent.gameObject.SetActive(false);
         gameOverUI.SetActive (true);
     }
 
@@ -86,6 +99,11 @@ public class GameUI : MonoBehaviour
     // 게임다시시작 버튼
     public void StartNewGame() {
         SceneManager.LoadScene("TEst"); // Application.LoadLevel은 옛 버전이라 Scenmanager로 교체하였습니다.
+
+    }
+
+    public void ReturnToMainMenu(){
+        SceneManager.LoadScene("Menu");
 
     }
 }
