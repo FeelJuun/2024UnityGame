@@ -3335,7 +3335,7 @@ MonoBehaviour:
   msBetweenShorts: 100
   muzzleVelocity: 35
   burstCount: 3
-  projectilesPerMag: 10
+  projectilesPerMag: 60
   reloadTime: 0.3
   kickMinMax: {x: 0.05, y: 0.2}
   recoilAngleMinMax: {x: 3, y: 5}
