@@ -10,6 +10,7 @@ public class Enemy : LivingEntity
     State currentState;
 
     public ParticleSystem deathEffect;
+    public static event System.Action OnDeathStatic;
 
     NavMeshAgent pathfinder;
     Transform target;
@@ -75,6 +76,9 @@ public class Enemy : LivingEntity
 	{
         AudioManager.instance.PlaySound("Impact", transform.position);
 		if (damage >= health) {
+            if (OnDeathStatic != null){
+                OnDeathStatic();
+            }
             AudioManager.instance.PlaySound("Enemy Death ", transform.position);
             var main = deathEffect.main; // 원래 없던 코드이지만 주의 경고문이 발생하여 deathEffect.startLifetime이라 써야하지만 main.startLifetime.constant라고 수정하였습니다.
 			Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, main.startLifetime.constant);
