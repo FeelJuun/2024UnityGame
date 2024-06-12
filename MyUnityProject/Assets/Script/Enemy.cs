@@ -73,7 +73,9 @@ public class Enemy : LivingEntity
 
     public override void TakeHit (float damage, Vector3 hitPoint, Vector3 hitDirection)
 	{
+        AudioManager.instance.PlaySound("Impact", transform.position);
 		if (damage >= health) {
+            AudioManager.instance.PlaySound("Enemy Death ", transform.position);
             var main = deathEffect.main; // 원래 없던 코드이지만 주의 경고문이 발생하여 deathEffect.startLifetime이라 써야하지만 main.startLifetime.constant라고 수정하였습니다.
 			Destroy(Instantiate(deathEffect.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, main.startLifetime.constant);
 		}
@@ -92,6 +94,7 @@ public class Enemy : LivingEntity
             float sqrDstToTarget = (target.position - transform.position).sqrMagnitude;
             if (sqrDstToTarget < Mathf.Pow(attackDistanceThreshold + myCollisionRadius + targetCollisionRadius, 2)){
                 nextAttackTime = Time.time + timeBetweenAttacks;
+                AudioManager.instance.PlaySound("Enemy Attack", transform.position);
                 StartCoroutine(Attack());
                 }   
             }
